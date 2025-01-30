@@ -91,6 +91,7 @@ parser.add_argument("--tailnet-name", type=str, default=None, help="Tailnet name
 parser.add_argument("--node-id-filter", type=str, default=None, help="Comma separated list of allowed node IDs (only for UDP and Tailscale discovery)")
 parser.add_argument("--interface-type-filter", type=str, default=None, help="Comma separated list of allowed interface types (only for UDP discovery)")
 parser.add_argument("--system-prompt", type=str, default=None, help="System prompt for the ChatGPT API")
+parser.add_argument("--gpu-index", type=int, default=0, help="GPU index to use")
 args = parser.parse_args()
 print(f"Selected inference engine: {args.inference_engine}")
 
@@ -99,12 +100,14 @@ print_yellow_exo()
 system_info = get_system_info()
 print(f"Detected system: {system_info}")
 
+os.
 shard_downloader: ShardDownloader = new_shard_downloader() if args.inference_engine != "dummy" else NoopShardDownloader()
 inference_engine_name = args.inference_engine or ("mlx" if system_info == "Apple Silicon Mac" else "tinygrad")
 print(f"Inference engine name after selection: {inference_engine_name}")
 
 inference_engine = get_inference_engine(inference_engine_name, shard_downloader)
 print(f"Using inference engine: {inference_engine.__class__.__name__} with shard downloader: {shard_downloader.__class__.__name__}")
+os.environ["VISIBLE_DEVICES"] = str(args.gpu_index)
 
 if args.node_port is None:
   args.node_port = find_available_port(args.node_host)

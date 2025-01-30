@@ -181,8 +181,9 @@ async def linux_device_capabilities() -> DeviceCapabilities:
   if Device.DEFAULT == "CUDA" or Device.DEFAULT == "NV" or Device.DEFAULT == "GPU":
     import pynvml
 
+    gpu_index = int(os.environ.get("VISIBLE_DEVICES", 0))
     pynvml.nvmlInit()
-    handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+    handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_index)
     gpu_raw_name = pynvml.nvmlDeviceGetName(handle).upper()
     gpu_name = gpu_raw_name.rsplit(" ", 1)[0] if gpu_raw_name.endswith("GB") else gpu_raw_name
     gpu_memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
